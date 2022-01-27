@@ -1,1 +1,12 @@
+# Progress on Ocean Macro-Plastic Pollution Detection from Satellite Imagery
 
+Plastic pollution in the oceans has become a major concern in the past decades, causing high degradation of marine ecosystems all over the world. This pollution comes in different forms, varying by size, shape and impact on the ecosystem. Among them, *macro-plastics* regroups all the plastic debris larger than 5 mm. These debris mostly agregate at the surface of the ocean and slowly degrade while drifiting with the winds and currents. Some attempts have been made to modelize the currents and predict the movement of theose agregates, but more recently, a publication in Nature by Lauren Biermann, Daniel Clewley, Victor Martinez-Vicente & Konstantinos topouzelis, proved that it was possible to track them through satellite imagery. Using Sentinel-2 spectral data, with a resolution of 10 m, they were able to build a spectral signature of plastic debris at a sub-pixel scale, efficiently recognizing them from vegetation debris and sea foam.
+
+Unfortunately, they had access to limited data, because this model requires both labeled satellite images and field confirmation of the debris. They extended their work further with the assistance of data scientists from Two Sigma, and a part of the pipeline has been automated. But further efforts can still be made to make the workflow more robust, and ideally to create a larger dataset of labeled satellite images.
+
+My goals in this project will be as follows:
+1. Update/Reimplement the EO-Learn pipeline from Two Sigma;
+2. Conduct an exploratory analysis of unlabeled data from Sentinel-2, and decide between further improving the pipeline or proceeding to step 3;
+3. Use unsupervised learning as well as less precisely labeled data (RGB labeled satellite imagery from NASA, GPS-tagged beach cleaning operations) to create a larger dataset of suspected plastic observations from Sentinel-2;
+
+From the litterature, I beleive that using Sentinel-2 is more promising than other constellations: even if higher resolution images are available, the broad spectrum used makes it possible to differentiate plastic debris from other types of surface agregates. This is not the case yet with RGB imagery. I also beleive that being able to identify a large set of *suspected* plastic debris, even without the field confirmation of their nature, can help further developping this kind of model, and help conduct more efficient field operations in the future.
