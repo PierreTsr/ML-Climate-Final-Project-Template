@@ -16,3 +16,12 @@
   - Use GPS + timed data from beach clean-up operations to identify a set of images with suspected plastic debris (https://www.kaggle.com/maartenvandevelde/marine-litter-watch-19502021, https://www.cefas.co.uk/data-and-publications/dois/clip-belize-marine-litter-abundance-and-composition-2019/);
 - Rewrite the abstract with new set of goals/milestones.
 - Read EO-Learn documentation to prepare for a large update of their code.
+
+## 02/03/2022
+
+- After discussing with Pr. Kucukelbir, realized that Sentinel-Hub subscription could be avoided.
+- Changed the code to use manually downloaded tiles. It requires quite a bit work for now:
+  1. Downloading tiles in `.SAFE` format from https://scihub.copernicus.eu/dhus/#/home
+  2. Using ESA's SNAP tool to resample the tiles to the desired resolution, and exporting them to `GeoTIFF` format (approx. 1.5Gb/tile)
+  3. Modifying the `.json` description file to use the new coordinates
+- It should be possible to use ESA's API and a bash script to streamline the first two steps, but I'll see that later. Now the code is fully operational (they were a lot of outdated/errored parts) and able to process efficiently a tile to compute our input features. I then need to have look at the inference part. I still haven't looked for the labeled data.
