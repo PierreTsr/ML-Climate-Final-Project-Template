@@ -1,0 +1,3 @@
+[submodule "src/PMLDataPipeline"]
+	path = src/PMLDataPipeline
+	url = git@github.com:PierreTsr/PMLDataPipeline.git
