@@ -25,3 +25,12 @@
   2. Using ESA's SNAP tool to resample the tiles to the desired resolution, and exporting them to `GeoTIFF` format (approx. 1.5Gb/tile)
   3. Modifying the `.json` description file to use the new coordinates
 - It should be possible to use ESA's API and a bash script to streamline the first two steps, but I'll see that later. Now the code is fully operational (they were a lot of outdated/errored parts) and able to process efficiently a tile to compute our input features. I then need to have look at the inference part. I still haven't looked for the labeled data.
+
+## 02/10/2022
+
+- Reached out to Dr. Laura Biermann to request access to labeled data (no answer so far) -> In the mean time focussing on unsupervised approaches.
+- Spotted a few insidious errors in the code base (physical parameters were hard-coded with incorrect values).
+- Tried a few unsupervised approaches on small patches, but faced some problem specific issues (cf. https://edstem.org/us/courses/17799/discussion/1150842)
+- Exploratory analysis with enhanced visuals show that it should be possible to isolate only the debris. This should provide a reduces and more balanced dateset to use unsupervised learning on.
+
+
