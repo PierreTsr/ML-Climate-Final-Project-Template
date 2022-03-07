@@ -33,4 +33,7 @@
 - Tried a few unsupervised approaches on small patches, but faced some problem specific issues (cf. https://edstem.org/us/courses/17799/discussion/1150842)
 - Exploratory analysis with enhanced visuals show that it should be possible to isolate only the debris. This should provide a reduces and more balanced dateset to use unsupervised learning on.
 
+## 2022-03-07 check in: alp
+
+Looking good. Would encourage trying to get some initial results soon. Also please try to update this weekly.
 
