@@ -37,3 +37,12 @@
 
 Looking good. Would encourage trying to get some initial results soon. Also please try to update this weekly.
 
+## 23/03/2022
+I forgot to update the journal in a while due to the midterms and the break, but here is what happened since last time:
+
+- I found a solution to the issue I posted on EdStem: I am using robust covariance estimates to isolate the outliers (i.e. the debris) in the tiles. I have experienced with a few variations around this method and I am now able to isolate all the debris fairly reliably. I will use the labeled data I just recieved to provide some quantified results (my goal will be to maximize recall, as the aim of this part is to reduced the quantity of water pixels);
+- I also created an entirely new visualization workflow to help me in the exploratory analysis;
+- I tried a few out-of-the-box unsupervised clustering algorithm from `sklearn`. But, I wasn't able to evaluate them without the labeled data;
+- I just recieved some labeled data from Dr. Biermann, I am still querying the related tiles from the ESA portal and pre-processing them;
+- In the coming weeks I will have more time to put in the project, and my goal will be to create a visualization tool to explore the unsupervised classification results, and apply it to the labeled data to get some quantified results.
+
