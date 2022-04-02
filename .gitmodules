@@ -1,0 +1,3 @@
+[submodule "src/outliers_pipeline"]
+	path = src/outliers_pipeline
+	url = git@github.com:PierreTsr/PMLDataPipeline.git
