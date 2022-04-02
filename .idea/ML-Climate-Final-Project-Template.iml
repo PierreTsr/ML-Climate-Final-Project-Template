@@ -3,7 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/data/Ghana" />
-      <excludeFolder url="file://$MODULE_DIR$/src/tile_processing_pipeline/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/src/PMLDataPipeline/.idea" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (PMLDataPipeline-laNt9Ccu)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
