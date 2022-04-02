@@ -17,13 +17,11 @@
 
 """
 import argparse
-import json
-from datetime import datetime
 from pathlib import Path
 
-from plasticfinder.data_processing import post_process_patches, merge_results, post_processing_visualizations
+from plasticfinder.data_processing import post_process_patches, post_processing_visualizations, \
+    pre_processing_visualizations
 from plasticfinder.data_querying import preprocess_tile
-from plasticfinder.utils import create_outliers_dataset
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Script to download a given region and process it in to EOPatches')
@@ -35,7 +33,7 @@ if __name__ == "__main__":
     output_dir = Path(args.dir)
     tile = args.tile
 
-    preprocess_tile(output_dir, tile, patches=(10, 10))
+    preprocess_tile(output_dir, tile, patches=(15, 15))
+    pre_processing_visualizations(output_dir / tile)
     post_process_patches(output_dir / tile)
     post_processing_visualizations(output_dir / tile)
-    create_outliers_dataset(output_dir / tile)
