@@ -46,3 +46,13 @@ I forgot to update the journal in a while due to the midterms and the break, but
 - I just recieved some labeled data from Dr. Biermann, I am still querying the related tiles from the ESA portal and pre-processing them;
 - In the coming weeks I will have more time to put in the project, and my goal will be to create a visualization tool to explore the unsupervised classification results, and apply it to the labeled data to get some quantified results.
 
+## 02/04/2022
+
+- I had to reshape some part of my pipeline to make it usable with my limited ressources (still the same issue: a tile has too many datapoints, and I need an efficient way to filter them);
+- Now, given a set of observations, once the tile is downloaded, I can produce a set of unsupervised identified debris in the same location in a few minutes. I still need to make some progess on the classification part, but it should make it much easier to compare my results with labeled data;
+- I'm currently working on a notebook with an interactive display of those results;
+- The next steps are: 
+  - using this pipeline on more observations to have quatified estimates of its recall;
+  - trying with different clustering/features combination to find the most accurate one;
+  - quantifying these results;
+
