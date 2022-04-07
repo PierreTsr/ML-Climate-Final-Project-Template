@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from shapely.geometry import MultiPoint
 
-from src.outliers_pipeline.plasticfinder.utils import get_tile_bounding_box
+from outliers_pipeline.plasticfinder.utils import get_tile_bounding_box
 
 
 def observations_roi(features_file, radius=1000, target_dir=None):
