@@ -42,4 +42,5 @@ if __name__ == "__main__":
 
         marida_df = load_target(scene)
         aligned_df = align(outliers_df, marida_df)
+        aligned_df.loc[:, "id"] = aligned_df.id.astype(str)
         aligned_df.to_file(output_dir / tile.stem / "aligned_outliers.shp")
