@@ -1,12 +1,17 @@
-import numpy as np
-import pandas as pd
-import geopandas as gpd
 from shapely.geometry import MultiPolygon
-from multiprocessing import Pool
 
-from tqdm import tqdm
+from marida_data_loading import target_mapping, target_categories
+from src.outliers_pipeline.plasticfinder.utils import BAND_NAMES, INDICES
 
-from marida_data_loading import ANOMALIES, CLASSES, marida_categories
+NORMED_BANDS = ["NORM_" + band for band in BAND_NAMES]
+NORMED_INDICES = ["NORM_" + idx for idx in INDICES]
+MEAN_BANDS = ["MEAN_" + band for band in BAND_NAMES]
+MEAN_INDICES = ["MEAN_" + idx for idx in INDICES]
+
+
+def simplify_classes(df, key="id"):
+    df.loc[:, key] = df.loc[:, key].map(target_mapping).astype(target_categories)
+    return df
 
 
 def oracle(outlier_df, target_df, category=None):
@@ -30,32 +35,3 @@ def buffer_filter(outlier_df, target_df, radius=500):
     filtered_df = outlier_df.loc[outlier_df.geometry.intersects(target_roi),]
     return filtered_df
 
-
-def area_recall(oracle_df, target_df, categories=ANOMALIES, key=None, verbose=False):
-    target_df = target_df.loc[target_df.id.isin(categories),]
-    if key is not None:
-        oracle_df = oracle_df.loc[oracle_df[key] == 1,]
-
-    target_roi = MultiPolygon(list(target_df.geometry))
-    if not target_roi.is_valid:
-        target_roi = target_roi.buffer(1e-3)
-    target_area = target_roi.area
-    if target_area == 0:
-        return None
-
-    cut_polygons = list(oracle_df.geometry.intersection(target_roi).convex_hull)
-    discovered_roi = MultiPolygon(cut_polygons)
-    discovered_area = discovered_roi.area
-
-    if verbose:
-        print("Target area: {t:.2e} m2, discovered area: {d:.2e} m2, recall: {r:.2e}".format(
-            t=target_area,
-            d=discovered_area,
-            r=discovered_area / target_area
-        ))
-
-    return discovered_area / target_area
-
-
-def pca_plot(df):
-    pass
