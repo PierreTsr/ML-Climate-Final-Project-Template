@@ -24,6 +24,24 @@ CLASSES = [
     "Mixed Water"
 ]
 
+COLOR_MAPPING = {
+    "Marine Debris": "#ff2a00",
+    "Dense Sargassum": "#013602",
+    "Sparse Sargassum": "#00e007",
+    "Natural Organic Material": "#65801c",
+    "Marine Water": "#001ba1",
+    "Sediment-Laden Water": "#204d4b",
+    "Foam": "#639cf7",
+    "Turbid Water": "#08474d",
+    "Shallow Water": "#366387",
+    "Waves": "#386aff",
+    "Mixed Water": "#667a8a",
+    "Wakes": "#5a81a1",
+    "Ship": "#ff00ea",
+    "Cloud Shadows": "#2e2e2d",
+    "Clouds": "#a6a6a6",
+}
+
 
 PLASTIC = ["Marine Debris"]
 
@@ -36,7 +54,26 @@ ANOMALIES = [
     "Cloud Shadows",
 ]
 
-marida_categories = pd.CategoricalDtype(categories=CLASSES, ordered=True)
+target_mapping = {
+    "Marine Debris": "Non-Organic Debris",
+    "Dense Sargassum": "Sargassum",
+    "Sparse Sargassum": "Sargassum",
+    "Natural Organic Material": "Organic Debris",
+    "Ship": "Ship",
+    "Clouds": "Clouds",
+    "Marine Water": "Other Water types",
+    "Sediment-Laden Water": "Other Water types",
+    "Foam": "Other Water types",
+    "Turbid Water": "Other Water types",
+    "Shallow Water": "Other Water types",
+    "Waves": "Other Water types",
+    "Cloud Shadows": "Cloud Shadows",
+    "Wakes": "Other Water types",
+    "Mixed Water": "Other Water types"
+}
+
+marida_categories = pd.CategoricalDtype(categories=CLASSES, ordered=False)
+target_categories = pd.CategoricalDtype(categories=set(target_mapping.values()), ordered=False)
 marida_mapping = {i + 1: cat for i, cat in enumerate(CLASSES)}
 
 
