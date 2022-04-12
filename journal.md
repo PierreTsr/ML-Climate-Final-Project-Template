@@ -56,3 +56,17 @@ I forgot to update the journal in a while due to the midterms and the break, but
   - trying with different clustering/features combination to find the most accurate one;
   - quantifying these results;
 
+## 08/04/2022
+
+- I started using the MARIDA dataset, which is immensly useuful. I am now able to process any tile in the dataset (after querying them on the ESA's platform), find all the outliers, and merge in the annotations from the labeled scene in MARIDA. All of that in a few minutes;
+- I am currently working on a subset of 9 out of 63 tiles from the dataset:
+  - I have a recall of 1.0 on all the interesting categories with my outlier identification (no-classification at this stage), while exclusing between 99% and 99.9% of the pixels, depending on the method and tile;
+  - Unsupervised classification will likely be very hard, as the distribution is highly continuous;
+  - On the bright side, MARIDA provides enough data so that unsupervised learning might not be the best suited approach anymore;
+  - I trained a few very simple supervised models, and it seems promising: around 80% F1 score so far. This part needs to be pushed further;
+- From there, the next steps are:
+  - Collect the entire dataset;
+  - Provide an evaluation of a Gaussian Naive Bayes model (as Dr. Biermann's paper);
+  - Provide an evaluation of a few Random Forest models (as MARIDA's paper);
+  - Compare the results with and without the gaussian normalization of pixel values and indices;
+
