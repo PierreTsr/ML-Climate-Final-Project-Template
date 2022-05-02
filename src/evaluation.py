@@ -1,3 +1,4 @@
+from multiprocessing import Pool
 from pathlib import Path
 
 import geopandas as gpd
@@ -9,8 +10,10 @@ from shapely.geometry import MultiPolygon
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import classification_report
+from tqdm import tqdm
 
-from src.classification import NORMED_INDICES, MEAN_INDICES, NORMED_BANDS, MEAN_BANDS
+from src.classification import NORMED_INDICES, MEAN_INDICES, NORMED_BANDS, MEAN_BANDS, fit_predict_lda, \
+    fit_predict_forest, fit_predict_adaboost, fit_predict_gnb
 from src.marida_data_loading import target_mapping, CLASSES, load_target, marida_categories, target_categories, \
     ANOMALIES, COLOR_MAPPING
 from src.outliers_pipeline.plasticfinder.utils import get_matching_marida_target, BAND_NAMES, INDICES, compute_tile_size
@@ -163,3 +166,112 @@ def compute_reduction(scene_dir=Path("data/scenes"), outliers=("LOCAL", "GLOBAL"
             print(e)
             continue
     return reduction_df
+
+
+def compute_validation(train_df, test_df,
+                       models={"GNB": fit_predict_gnb,
+                               "LDA": fit_predict_lda},
+                       features=None
+                       ):
+    if features is None:
+        features = {
+            "bands": BAND_NAMES,
+            "bands_with_means": BAND_NAMES + MEAN_BANDS,
+            "indices": INDICES,
+            "indices_with_means": INDICES + MEAN_INDICES,
+            "standard": BAND_NAMES + INDICES,
+            "standard_with_means": BAND_NAMES + INDICES + MEAN_BANDS + MEAN_INDICES,
+            "normalized_indices": BAND_NAMES + NORMED_INDICES,
+            "normalized_indices_with_means": BAND_NAMES + NORMED_INDICES + MEAN_INDICES,
+            "normalized_bands": NORMED_BANDS + INDICES,
+            "normalized_bands_with_means": NORMED_BANDS + INDICES + MEAN_BANDS,
+            "normalized": NORMED_BANDS + NORMED_INDICES,
+            "normalized_with_means": NORMED_BANDS + MEAN_BANDS + NORMED_INDICES + MEAN_INDICES,
+            "all": NORMED_BANDS + NORMED_INDICES + BAND_NAMES + INDICES + MEAN_BANDS + MEAN_INDICES
+        }
+
+    df = pd.DataFrame(
+        np.nan,
+        index=pd.MultiIndex.from_product((models.keys(),
+                                          [*target_categories.categories, "accuracy", "macro avg"]),
+                                         names=["model", "category"]),
+        columns=pd.MultiIndex.from_product((features.keys(), ["precision", "recall", "f1-score"]))
+    )
+
+    for name, feature in features.items():
+        for model, func in models.items():
+            res = func(train_df, test_df, feature)
+            res.index = pd.MultiIndex.from_product(((model,), res.index))
+            res.columns = pd.MultiIndex.from_product(((name,), res.columns))
+            df.update(res)
+    return df
+
+
+def compute_classification_kfold(full_df, cv,
+                                 models={"GNB": fit_predict_gnb,
+                                         "LDA": fit_predict_lda},
+                                 features=None,
+                                 kwargs=None
+                                 ):
+    if kwargs is not None and len(models) > 1:
+        raise NotImplementedError("cannot have multiple models with specified arguments.")
+
+    if features is None:
+        features = {
+            "bands": BAND_NAMES,
+            # "bands_with_means": BAND_NAMES + MEAN_BANDS,
+            "indices": INDICES,
+            # "indices_with_means": INDICES + MEAN_INDICES,
+            "standard": BAND_NAMES + INDICES,
+            # "standard_with_means": BAND_NAMES + INDICES + MEAN_BANDS + MEAN_INDICES,
+            "normalized_indices": BAND_NAMES + NORMED_INDICES,
+            # "normalized_indices_with_means": BAND_NAMES + NORMED_INDICES + MEAN_INDICES,
+            "normalized_bands": NORMED_BANDS + INDICES,
+            # "normalized_bands_with_means": NORMED_BANDS + INDICES + MEAN_BANDS,
+            "normalized": NORMED_BANDS + NORMED_INDICES,
+            # "normalized_with_means": NORMED_BANDS + MEAN_BANDS + NORMED_INDICES + MEAN_INDICES,
+            "all": NORMED_BANDS + NORMED_INDICES + BAND_NAMES + INDICES + MEAN_BANDS + MEAN_INDICES
+        }
+
+    if kwargs is None:
+        df = pd.DataFrame(
+            np.nan,
+            index=pd.MultiIndex.from_product((models.keys(),
+                                              features.keys(),
+                                              [i for i in range(cv.n_splits)],
+                                              ["Non-Organic Debris", "accuracy", "macro avg"]),
+                                             names=["model", "features", "fold", "category"]),
+            columns=["precision", "recall", "f1-score"]
+        )
+    else:
+        standard_index = pd.MultiIndex.from_product((features.keys(),
+                                                     range(cv.n_splits),
+                                                     ["Non-Organic Debris", "accuracy", "macro avg"]),
+                                                    names=["features", "fold", "category"])
+        args_index = pd.MultiIndex.from_arrays((
+            [kwargs[i][key] for i in range(len(kwargs))] for key in kwargs[0].keys()),
+            names=kwargs[0].keys()
+        )
+        df = pd.DataFrame(
+            np.nan,
+            index=pd.MultiIndex.from_tuples(((*arg, *idx) for arg in args_index for idx in standard_index),
+                                            names=args_index.names + standard_index.names),
+            columns=["precision", "recall", "f1-score"]
+        )
+
+    for i, (train_idx, test_idx) in tqdm(enumerate(cv.split(full_df, full_df.id, full_df.scene)), desc="fold", position=0):
+        train_df = full_df.iloc[train_idx, :]
+        test_df = full_df.iloc[test_idx, :]
+        for name, feature in tqdm(features.items(), desc="features", position=1, leave=False):
+            if len(models) > 1:
+                for model, func in models.items():
+                    res = func(train_df, test_df, feature)
+                    res.index = pd.MultiIndex.from_product(((model,), (name,), (i,), res.index))
+                    df.update(res)
+            elif kwargs is not None:
+                model, func = list(models.items())[0]
+                for kwarg in tqdm(kwargs, desc="param", position=2, leave=False):
+                    res = func(train_df, test_df, feature, kwarg)
+                    res.index = pd.MultiIndex.from_tuples(((*kwarg.values(), name, i, key) for key in res.index))
+                    df.update(res)
+    return df

@@ -1,6 +1,9 @@
 from argparse import ArgumentParser
 from itertools import compress
 from pathlib import Path
+import geopandas as gpd
+import pandas as pd
+from fiona.errors import DriverError
 
 from classification import align
 from marida_data_loading import load_target
@@ -43,6 +46,14 @@ if __name__ == "__main__":
 
     print("Found {} matching tiles: {}".format(len(tiles), [tile.stem for tile in tiles]))
 
+    marida_outliers = []
+    try:
+        gdf = gpd.GeoDataFrame.from_file(output_dir / "marida_outliers.shp")
+        print("Found exisiting outlier df, adding new data to it.")
+        marida_outliers.append(gdf)
+    except DriverError:
+        pass
+
     for tile in tiles:
         scene = marida_dir / "shapefiles" / (get_matching_marida_target(tile.stem) + ".shp")
         roi = marida_dir / "ROI" / (scene.stem + ".geojson")
@@ -59,3 +70,8 @@ if __name__ == "__main__":
         aligned_df = align(outliers_df, marida_df)
         aligned_df.loc[:, "id"] = aligned_df.id.astype(str)
         aligned_df.to_file(output_dir / tile.stem / "aligned_outliers.shp")
+
+        marida_outliers.append(aligned_df.dropna())
+
+    marida_outliers = pd.concat(marida_outliers)
+    marida_outliers.to_file(output_dir / "marida_outliers.shp")
