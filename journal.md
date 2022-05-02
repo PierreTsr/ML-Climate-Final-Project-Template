@@ -69,4 +69,20 @@ I forgot to update the journal in a while due to the midterms and the break, but
   - Provide an evaluation of a Gaussian Naive Bayes model (as Dr. Biermann's paper);
   - Provide an evaluation of a few Random Forest models (as MARIDA's paper);
   - Compare the results with and without the gaussian normalization of pixel values and indices;
+ 
+## 18/04/2022
+
+- I now have the entire dataset (except for 1 tile that I cannot download, and 1 too small to process adequatly);
+- I have performed an evaluation of the outlier extraction pipeline on a subset of 15 out of 61 tiles:
+  - The high recall for plastic debris is confirmed (> 98%);
+  - The efficiency is also confirmed (~1% of the pixels are extracted);
+  - Despite some slightly worse results, I have chosen the fastest approach to process the other 46 tiles (I don't have the resources for the costlier one);
+- I have extrated the outliers on the entire dataset (61 tiles), and designed a custom train/eval split as the one provided by MARIDA had a highly unbalanced count of plastic pixels. The propsed split is approx 80/20 for platic pixel count, and 80/20 for total labeled pixel count. Only the pixels extracted by the outlier pipeline are selected: this probably create a slight bias, but it saves me a lot of time, and the pixel-extraction process might be more accurate than the hand drawn polygons;
+- I trained 2 simple models on the train set:
+  - LDA;
+  - GaussianNB;
+- I trained some random-forests with different sets of features, with random-search for hyperparameter tuning + 5-fold train/dev split on the train set, and then evaluated on the eval set with the best for each set of features:
+  - One model out-performs SOA for plastic-detection by a very thin margin (is it signicant?);
+  - Normalization seems to consistently have slightly better resutls than original values;
+- I don't know if I'll have enough time to train another model architecture (XGBoost?);
 
