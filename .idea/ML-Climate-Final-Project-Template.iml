@@ -4,6 +4,11 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/src/PMLDataPipeline/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/data/Ghana_old" />
+      <excludeFolder url="file://$MODULE_DIR$/data/scenes" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Honduras" />
+      <excludeFolder url="file://$MODULE_DIR$/data/Methylene" />
+      <excludeFolder url="file://$MODULE_DIR$/data/S2_L1C" />
+      <excludeFolder url="file://$MODULE_DIR$/data/MARIDA" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (PMLDataPipeline-laNt9Ccu)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
